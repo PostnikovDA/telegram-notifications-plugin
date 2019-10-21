@@ -55,19 +55,21 @@ public class TelegramBot extends TelegramLongPollingCommandBot {
     private volatile RequestConfig requestConfig;
 
 
-    public TelegramBot(String token, String name) {
+    public TelegramBot(String token, String name, boolean handleCommands) {
         super(name);
         this.token = token;
 
         initializeProxy();
 
-        Arrays.asList(
-                new StartCommand(),
-                new HelpCommand(),
-                new SubCommand(),
-                new UnsubCommand(),
-                new StatusCommand()
-        ).forEach(this::register);
+        if (handleCommands) {
+            Arrays.asList(
+                    new StartCommand(),
+                    new HelpCommand(),
+                    new SubCommand(),
+                    new UnsubCommand(),
+                    new StatusCommand()
+            ).forEach(this::register);
+        }
     }
 
     public void sendMessage(Long chatId, String message) {

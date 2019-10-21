@@ -25,6 +25,7 @@ public class TelegramBotRunner {
 
     private String botToken;
     private String botName;
+    private boolean botHandleCommands;
 
 
     static {
@@ -38,9 +39,10 @@ public class TelegramBotRunner {
         return instance;
     }
 
-    public void runBot(String name, String token) {
+    public void runBot(String name, String token, boolean handleCommands) {
         botName = name;
         botToken = token;
+        botHandleCommands = handleCommands;
         executor.submit(startBotTask);
     }
 
@@ -51,8 +53,9 @@ public class TelegramBotRunner {
     private final Runnable startBotTask = () -> {
         if (bot == null
                 || !bot.getBotToken().equals(botToken)
-                || !bot.getBotUsername().equals(botName)) {
-            bot = new TelegramBot(botToken, botName);
+                || !bot.getBotUsername().equals(botName)
+                || bot.getRegisteredCommands().isEmpty() == botHandleCommands) {
+            bot = new TelegramBot(botToken, botName, botHandleCommands);
             LOG.log(Level.INFO, "Bot was created");
         } else {
             LOG.log(Level.INFO, "There is no reason for bot recreating");

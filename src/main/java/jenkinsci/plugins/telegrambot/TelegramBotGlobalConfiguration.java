@@ -35,6 +35,7 @@ public class TelegramBotGlobalConfiguration extends GlobalConfiguration {
     private String botName;
     private UserApprover.ApprovalType approvalType;
     private Set<User> users;
+    private boolean handleCommands = true;
 
     /**
      * Called when Jenkins is starting and it's config is loading
@@ -57,7 +58,7 @@ public class TelegramBotGlobalConfiguration extends GlobalConfiguration {
         Subscribers.getInstance().addObserver(this::onSubscribersUpdate);
 
         // Run the bot after Jenkins config has been loaded
-        TelegramBotRunner.getInstance().runBot(botName, botToken);
+        TelegramBotRunner.getInstance().runBot(botName, botToken, handleCommands);
     }
 
     /**
@@ -73,6 +74,7 @@ public class TelegramBotGlobalConfiguration extends GlobalConfiguration {
         setShouldLogToConsole(formData.getBoolean("shouldLogToConsole"));
         setBotToken(formData.getString("botToken"));
         setBotName(formData.getString("botName"));
+        setHandleCommands(formData.getBoolean("handleCommands"));
 
         // Approve users
         UserApprover userApprover = new UserApprover(users != null ? users : new HashSet<>());
@@ -82,7 +84,7 @@ public class TelegramBotGlobalConfiguration extends GlobalConfiguration {
         // Store users
         Subscribers.getInstance().setUsers(users != null ? new HashSet<>(users) : new HashSet<>());
 
-        TelegramBotRunner.getInstance().runBot(botName, botToken);
+        TelegramBotRunner.getInstance().runBot(botName, botToken, handleCommands);
 
         // Save the configuration
         save();
@@ -148,4 +150,11 @@ public class TelegramBotGlobalConfiguration extends GlobalConfiguration {
         this.approvalType = approvalType;
     }
 
+    public boolean isHandleCommands() {
+        return handleCommands;
+    }
+
+    void setHandleCommands(boolean handleCommands) {
+        this.handleCommands = handleCommands;
+    }
 }
